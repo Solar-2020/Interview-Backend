@@ -40,4 +40,4 @@ ADD ./scripts/run.sh /run.sh
 ENV GIT_BRANCH="main"
 ENV SERVICE_NAME="post"
 
-CMD /run.sh /main /var/log/solar_$SERVICE_NAME_$GIT_BRANCH.log
+CMD /run.sh /main /var/log/solar_$SERVICE_NAME.$GIT_BRANCH.log

@@ -1,6 +1,7 @@
 package interviewHandler
 
 import (
+	"github.com/Solar-2020/Interview-Backend/internal/services/interview"
 	"github.com/valyala/fasthttp"
 )
 
@@ -12,12 +13,12 @@ type Handler interface {
 }
 
 type handler struct {
-	interviewService   interviewService
+	interviewService   interview.Service
 	interviewTransport interviewTransport
 	errorWorker   errorWorker
 }
 
-func NewHandler(interviewService interviewService, interviewTransport interviewTransport, errorWorker errorWorker) Handler {
+func NewHandler(interviewService interview.Service, interviewTransport interviewTransport, errorWorker errorWorker) Handler {
 	return &handler{
 		interviewService:   interviewService,
 		interviewTransport: interviewTransport,
@@ -26,7 +27,7 @@ func NewHandler(interviewService interviewService, interviewTransport interviewT
 }
 
 func (h *handler) Create(ctx *fasthttp.RequestCtx) {
-	post, err := h.interviewTransport.CreateDecode(ctx)
+	poll, err := h.interviewTransport.CreateDecode(ctx)
 	if err != nil {
 		err = h.errorWorker.ServeJSONError(ctx, err)
 		if err != nil {
@@ -35,7 +36,7 @@ func (h *handler) Create(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	postReturn, err := h.interviewService.Create(post)
+	pollReturn, err := h.interviewService.Create(poll)
 	if err != nil {
 		err = h.errorWorker.ServeJSONError(ctx, err)
 		if err != nil {
@@ -44,7 +45,7 @@ func (h *handler) Create(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	err = h.interviewTransport.CreateEncode(postReturn, ctx)
+	err = h.interviewTransport.CreateEncode(pollReturn, ctx)
 	if err != nil {
 		err = h.errorWorker.ServeJSONError(ctx, err)
 		if err != nil {

@@ -46,6 +46,7 @@ func (s *storage) InsertInterviews(interviews []models.Interview, postID int) (e
 		if err != nil {
 			return
 		}
+		interviews[i].ID = currentInterviewID
 
 		err = s.insertAnswers(tx, interviews[i].Answers, currentInterviewID)
 		if err != nil {

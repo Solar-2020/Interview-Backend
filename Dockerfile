@@ -33,20 +33,11 @@ FROM alpine
 
 COPY --from=builder /dist/main /
 
-ENV POSTS_DB_CONNECTION_STRING=postgres://postgres:postgres@185.255.134.117:5432/posts?search_path=posts&sslmode=disable
-ENV UPLOAD_DB_CONNECTION_STRING=postgres://postgres:postgres@185.255.134.117:5432/upload?search_path=upload&sslmode=disable
-
 EXPOSE 8099
 
 ADD ./scripts/run.sh /run.sh
 
 ENV GIT_BRANCH="main"
+ENV SERVICE_NAME="post"
 
-#RUN touch /solar_main.log
-#RUN ls /
-
-# Command to run
-#CMD ["/main >> /solar_main.log"]
-#CMD "/bin/sh -c ls /"
-#CMD "/bin/sh"
-CMD /run.sh /main /var/log/solar_$GIT_BRANCH.log
+CMD /run.sh /main /var/log/solar_$SERVICE_NAME.$GIT_BRANCH.log

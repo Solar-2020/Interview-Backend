@@ -8,8 +8,8 @@ import (
 )
 
 type Transport interface {
-	CreateDecode(ctx *fasthttp.RequestCtx) (request models.Interview, err error)
-	CreateEncode(response models.Interview, ctx *fasthttp.RequestCtx) (err error)
+	CreateDecode(ctx *fasthttp.RequestCtx) (request models.InterviewsRequest, err error)
+	CreateEncode(response models.InterviewsRequest, ctx *fasthttp.RequestCtx) (err error)
 
 	GetDecode(ctx *fasthttp.RequestCtx) (interviewIDs []int, err error)
 	GetEncode(response []models.Interview, ctx *fasthttp.RequestCtx) (err error)
@@ -31,20 +31,42 @@ func NewTransport() Transport {
 	return &transport{}
 }
 
-func (t *transport) CreateDecode(ctx *fasthttp.RequestCtx) (request models.Interview, err error) {
-	panic("implement me")
+func (t *transport) CreateDecode(ctx *fasthttp.RequestCtx) (request models.InterviewsRequest, err error) {
+	var inputPost models.InterviewsRequest
+	err = json.Unmarshal(ctx.Request.Body(), &inputPost)
+	if err != nil {
+		return
+	}
+	request = inputPost
+	return
 }
 
-func (t *transport) CreateEncode(response models.Interview, ctx *fasthttp.RequestCtx) (err error) {
-	panic("implement me")
+func (t *transport) CreateEncode(response models.InterviewsRequest, ctx *fasthttp.RequestCtx) (err error) {
+	body, err := json.Marshal(response)
+	if err != nil {
+		return
+	}
+	ctx.Response.Header.SetContentType("application/json")
+	ctx.Response.Header.SetStatusCode(fasthttp.StatusOK)
+	ctx.SetBody(body)
+	return
 }
 
 func (t *transport) GetDecode(ctx *fasthttp.RequestCtx) (interviewIDs []int, err error) {
-	panic("implement me")
+	err = json.Unmarshal(ctx.Request.Body(), &interviewIDs)
+	return
 }
 
 func (t transport) GetEncode(response []models.Interview, ctx *fasthttp.RequestCtx) (err error) {
-	panic("implement me")
+	body, err := json.Marshal(response)
+	if err != nil {
+		ctx.Response.Header.SetStatusCode(fasthttp.StatusInternalServerError)
+		return
+	}
+	ctx.Response.Header.SetContentType("application/json")
+	ctx.Response.Header.SetStatusCode(fasthttp.StatusOK)
+	ctx.SetBody(body)
+	return
 }
 
 func (t transport) GetResultDecode(ctx *fasthttp.RequestCtx) (interviewID int, err error) {

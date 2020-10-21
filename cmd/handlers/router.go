@@ -16,11 +16,11 @@ func NewFastHttpRouter(interview interviewHandler.Handler, middleware Middleware
 
 	router.PanicHandler = panicHandler
 
-	router.Handle("POST", "/interview/interview", middleware.CORS(interview.Create))
-	//router.Handle("GET", "/interview/interview/interview", middleware.CORS(interview.GetList))
+	router.Handle("POST", "/interview/create", middleware.CORS(interview.Create))
+	router.Handle("GET", "/interview", middleware.CORS(interview.Get))
 
-	router.Handle("POST", "/interview/interview/result/:interviewID", middleware.CORS(interview.SetAnswer))
-	router.Handle("GET", "/interview/interview/result/:interviewID", middleware.CORS(interview.GetResult))
+	router.Handle("POST", "/interview/result/:interviewID", middleware.CORS(interview.SetAnswer))
+	router.Handle("GET", "/interview/result/:interviewID", middleware.CORS(interview.GetResult))
 
 	//router.Handle("POST", "/interview/interview", middleware.CORS(interview.Create))
 

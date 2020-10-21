@@ -13,6 +13,11 @@ type Interview struct {
 	Answers []Answer `json:"answers"`
 }
 
+type InterviewsRequest struct {
+	Interviews []Interview `json:"interviews"`
+	PostID int `json:"postID"`
+}
+
 type Answer struct {
 	ID          int    `json:"id"`
 	Text        string `json:"text"`

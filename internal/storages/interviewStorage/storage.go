@@ -222,5 +222,3 @@ func (s *storage) SelectInterview(interviewID int) (interview models.InterviewFr
 
 	return
 }
-
-

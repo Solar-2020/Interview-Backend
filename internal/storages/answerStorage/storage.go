@@ -241,10 +241,10 @@ func (s *storage) SelectAnswersResults(interviewIDs []int) (answers []models.Ans
 		   a.text,
 		   a.interview_id,
 		   (SELECT count(*)
-			FROM interviews.users_answers AS ua
+			FROM users_answers AS ua
 			WHERE ua.answer_id = a.id)
-	FROM interviews.answers AS a
-	WHERE a.interview_id IN;`
+	FROM answers AS a
+	WHERE a.interview_id IN `
 
 	sqlQuery := sqlQueryTemplate + createIN(len(interviewIDs))
 

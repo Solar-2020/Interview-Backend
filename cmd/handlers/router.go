@@ -9,9 +9,8 @@ import (
 func NewFastHttpRouter(interview interviewHandler.Handler, middleware httputils.Middleware) *fasthttprouter.Router {
 	router := fasthttprouter.New()
 
-	//router.Handle("GET", "/health", check)
-
 	router.PanicHandler = httputils.PanicHandler
+	router.Handle("GET", "/health", middleware.Log(httputils.HealthCheckHandler))
 
 	middlewareChain := httputils.NewLogCorsChain(middleware)
 

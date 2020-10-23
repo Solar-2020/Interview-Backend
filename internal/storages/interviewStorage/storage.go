@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	sqlutils "github.com/Solar-2020/GoUtils/sql"
 	"github.com/Solar-2020/Interview-Backend/pkg/models"
-	sqltools "github.com/go-park-mail-ru/2019_2_Next_Level/pkg/sqltools"
+	sqltools "github.com/go-park-mail-ru/2019_2_Next_Level/pkg/sqlTools"
 	"strconv"
 	"strings"
 )

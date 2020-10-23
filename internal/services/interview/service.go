@@ -1,6 +1,8 @@
 package interview
 
 import (
+	"database/sql"
+	"errors"
 	"github.com/Solar-2020/Interview-Backend/internal/models"
 )
 
@@ -53,6 +55,9 @@ func (s *service) Get(interviewIDs []int) (response models.InterviewsRequest, er
 func (s *service) GetResult(interviewID int) (response models.InterviewResult, err error) {
 	response.InterviewFrame, err = s.interviewStorage.SelectInterview(interviewID)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return response, errors.New("Опрос не найден")
+		}
 		return
 	}
 

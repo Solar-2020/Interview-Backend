@@ -17,8 +17,6 @@ RUN go mod download
 # Copy the code into the container
 COPY . /build
 
-RUN pwd && ls && ls /build
-
 # Build the application
 RUN go build -o main /build/cmd/
 

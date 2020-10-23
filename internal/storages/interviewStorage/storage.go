@@ -2,7 +2,9 @@ package interviewStorage
 
 import (
 	"database/sql"
-	"github.com/Solar-2020/Interview-Backend/internal/models"
+	sqlutils "github.com/Solar-2020/GoUtils/sql"
+	"github.com/Solar-2020/Interview-Backend/pkg/models"
+	sqltools "github.com/go-park-mail-ru/2019_2_Next_Level/pkg/sqltools"
 	"strconv"
 	"strings"
 )
@@ -10,8 +12,9 @@ import (
 type Storage interface {
 	InsertInterviews(interviews []models.Interview, postID int) (err error)
 	SelectInterviews(postIDs []int) (interviews []models.Interview, err error)
+	RemoveInterviews(ids []models.InterviewID) (removed []models.InterviewID, err error)
 
-	SelectInterview(interviewID int) (interview models.InterviewFrame, err error)
+	SelectInterview(interviewID models.InterviewID) (interview models.InterviewFrame, err error)
 }
 
 type storage struct {
@@ -41,7 +44,7 @@ func (s *storage) InsertInterviews(interviews []models.Interview, postID int) (e
 	defer tx.Rollback()
 
 	for i, _ := range interviews {
-		var currentInterviewID int
+		var currentInterviewID models.InterviewID
 		err = s.db.QueryRow(sqlQuery, interviews[i].Text, interviews[i].Type, postID).Scan(&currentInterviewID)
 		if err != nil {
 			return
@@ -59,7 +62,7 @@ func (s *storage) InsertInterviews(interviews []models.Interview, postID int) (e
 	return
 }
 
-func (s *storage) insertAnswers(tx *sql.Tx, answers []models.Answer, interviewID int) (err error) {
+func (s *storage) insertAnswers(tx *sql.Tx, answers []models.Answer, interviewID models.InterviewID) (err error) {
 	if len(answers) == 0 {
 		return
 	}
@@ -74,7 +77,7 @@ func (s *storage) insertAnswers(tx *sql.Tx, answers []models.Answer, interviewID
 
 	var params []interface{}
 
-	sqlQuery := sqlQueryTemplate + s.createInsertQuery(len(answers), 2)
+	sqlQuery := sqlQueryTemplate + sqlutils.CreateInsertQuery(len(answers), 2)
 
 	for i, _ := range answers {
 		params = append(params, interviewID, answers[i].Text)
@@ -98,7 +101,7 @@ func (s *storage) SelectInterviews(postIDs []int) (interviews []models.Interview
 	FROM interviews AS i
 	WHERE i.post_id IN `
 
-	sqlQuery := sqlQueryTemplate + createIN(len(postIDs))
+	sqlQuery := sqlQueryTemplate + sqlutils.CreateIN(len(postIDs))
 
 	var params []interface{}
 
@@ -126,7 +129,7 @@ func (s *storage) SelectInterviews(postIDs []int) (interviews []models.Interview
 		interviews = append(interviews, tempInterview)
 	}
 
-	interviewIDs := make([]int, 0)
+	interviewIDs := make([]models.InterviewID, 0)
 	for i, _ := range interviews {
 		interviewIDs = append(interviewIDs, interviews[i].ID)
 	}
@@ -146,13 +149,49 @@ func (s *storage) SelectInterviews(postIDs []int) (interviews []models.Interview
 	return
 }
 
-func (s *storage) selectAnswers(interviewIDs []int) (answers []models.Answer, err error) {
+func (s *storage) RemoveInterviews(ids []models.InterviewID) (removed []models.InterviewID, err error) {
+	removed = make([]models.InterviewID, 0, len(ids))
+	if len(ids) == 0 {
+		return
+	}
+
+	const sqlQueryTemplate = `
+	DELETE FROM interviews AS i
+	WHERE i.id IN `
+	const sqlQueryPostfix = ` RETURNING i.id`
+
+	sqlQuery := sqltools.CreatePacketQuery(sqlQueryTemplate, len(ids), 1, sqlQueryPostfix)
+
+	var params []interface{}
+
+	for i, _ := range ids {
+		params = append(params, ids[i])
+	}
+
+	rows, err := s.db.Query(sqlQuery, params...)
+	if err != nil {
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var id models.InterviewID
+		err = rows.Scan(&id)
+		if err != nil {
+			return
+		}
+		removed = append(removed, id)
+	}
+	return
+}
+
+func (s *storage) selectAnswers(interviewIDs []models.InterviewID) (answers []models.Answer, err error) {
 	const sqlQueryTemplate = `
 	SELECT a.id, a.text, a.interview_id
 	FROM answers AS a
 	WHERE a.interview_id IN `
 
-	sqlQuery := sqlQueryTemplate + createIN(len(interviewIDs))
+	sqlQuery := sqlQueryTemplate + sqlutils.CreateIN(len(interviewIDs))
 
 	var params []interface{}
 
@@ -182,35 +221,7 @@ func (s *storage) selectAnswers(interviewIDs []int) (answers []models.Answer, er
 	return
 }
 
-func createIN(count int) (queryIN string) {
-	queryIN = "("
-	for i := 0; i < count; i++ {
-		queryIN += "?, "
-	}
-	queryINRune := []rune(queryIN)
-	queryIN = string(queryINRune[:len(queryINRune)-2])
-	queryIN += ")"
-	return
-}
-
-func (s *storage) createInsertQuery(sliceLen int, structLen int) (query string) {
-	query = ""
-	for i := 0; i < sliceLen; i++ {
-		query += "("
-		for j := 0; j < structLen; j++ {
-			query += "?,"
-		}
-		// delete last comma
-		query = strings.TrimRight(query, ",")
-		query += "),"
-	}
-	// delete last comma
-	query = strings.TrimRight(query, ",")
-
-	return
-}
-
-func (s *storage) SelectInterview(interviewID int) (interview models.InterviewFrame, err error) {
+func (s *storage) SelectInterview(interviewID models.InterviewID) (interview models.InterviewFrame, err error) {
 	const sqlQuery = `
 	SELECT i.id, i.text, i.type, i.post_id
 	FROM interviews AS i

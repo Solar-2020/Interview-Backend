@@ -1,6 +1,7 @@
 package interviewHandler
 
 import (
+	http "github.com/Solar-2020/GoUtils/http"
 	"github.com/Solar-2020/Interview-Backend/internal/services/interview"
 	"github.com/valyala/fasthttp"
 )
@@ -8,6 +9,8 @@ import (
 type Handler interface {
 	Create(ctx *fasthttp.RequestCtx)
 	Get(ctx *fasthttp.RequestCtx)
+	Remove(ctx *fasthttp.RequestCtx)
+
 	GetResult(ctx *fasthttp.RequestCtx)
 	SetAnswer(ctx *fasthttp.RequestCtx)
 }
@@ -56,7 +59,61 @@ func (h *handler) Create(ctx *fasthttp.RequestCtx) {
 }
 
 func (h *handler) Get(ctx *fasthttp.RequestCtx) {
-	panic("implement me")
+	list, err := h.interviewTransport.GetDecode(ctx)
+	if err != nil {
+		err = h.errorWorker.ServeJSONError(ctx, err)
+		if err != nil {
+			h.errorWorker.ServeFatalError(ctx)
+		}
+		return
+	}
+
+	listReturn, err := h.interviewService.Get(list)
+	if err != nil {
+		err = h.errorWorker.ServeJSONError(ctx, err)
+		if err != nil {
+			h.errorWorker.ServeFatalError(ctx)
+		}
+		return
+	}
+
+	err = h.interviewTransport.GetEncode(listReturn, ctx)
+	if err != nil {
+		err = h.errorWorker.ServeJSONError(ctx, err)
+		if err != nil {
+			h.errorWorker.ServeFatalError(ctx)
+		}
+		return
+	}
+}
+
+func (h *handler) Remove(ctx *fasthttp.RequestCtx) {
+	list, err := h.interviewTransport.RemoveDecode(ctx)
+	if err != nil {
+		err = h.errorWorker.ServeJSONError(ctx, err)
+		if err != nil {
+			h.errorWorker.ServeFatalError(ctx)
+		}
+		return
+	}
+
+	listReturn, err := h.interviewService.Remove(list)
+	if err != nil {
+		err = h.errorWorker.ServeJSONError(ctx, err)
+		if err != nil {
+			h.errorWorker.ServeFatalError(ctx)
+		}
+		return
+	}
+
+	err = http.EncodeDefault(&listReturn, ctx)
+	if err != nil {
+		err = h.errorWorker.ServeJSONError(ctx, err)
+		if err != nil {
+			h.errorWorker.ServeFatalError(ctx)
+		}
+		return
+	}
 }
 
 func (h *handler) GetResult(ctx *fasthttp.RequestCtx) {

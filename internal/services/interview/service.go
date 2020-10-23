@@ -3,16 +3,17 @@ package interview
 import (
 	"database/sql"
 	"errors"
-	"github.com/Solar-2020/Interview-Backend/internal/models"
+	"github.com/Solar-2020/Interview-Backend/pkg/api"
+	"github.com/Solar-2020/Interview-Backend/pkg/models"
 )
 
 type Service interface {
-	Create(request models.InterviewsRequest) (response models.InterviewsRequest, err error)
+	Create(request api.CreateRequest) (response api.CreateResponse, err error)
+	Get(postIds api.GetRequest) (response api.GetResponse, err error)
+	Remove(interviewIds api.RemoveRequest) (response api.RemoveRequest, err error)
 
-	Get(interviewIDs []int) (response models.InterviewsRequest, err error)
-
-	GetResult(interviewID int) (response models.InterviewResult, err error)
-	GetResults(interviewIDs []int) (response []models.InterviewResult, err error)
+	GetResult(interviewID models.InterviewID) (response models.InterviewResult, err error)
+	GetResults(interviewIDs []models.InterviewID) (response []models.InterviewResult, err error)
 
 	SetAnswers(answers models.UserAnswers) (response models.InterviewResult, err error)
 }
@@ -29,22 +30,22 @@ func NewService(interviewStorage interviewStorage, answerStorage answerStorage) 
 	}
 }
 
-// POST /api/interview/create
-func (s *service) Create(request models.InterviewsRequest) (response models.InterviewsRequest, err error) {
+// POST /models/interview/create
+func (s *service) Create(request api.CreateRequest) (response api.CreateResponse, err error) {
 	err = s.interviewStorage.InsertInterviews(request.Interviews, request.PostID)
 	if err != nil {
 		return
 	}
+	response = api.CreateResponse{Interviews: request.Interviews}
 	for i := range request.Interviews {
-		request.Interviews[i].PostID = request.PostID
+		response.Interviews[i].PostID = request.PostID
 	}
-	response = request
 	return
 }
 
-// POST /api/interview
-func (s *service) Get(interviewIDs []int) (response models.InterviewsRequest, err error) {
-	resp, err := s.interviewStorage.SelectInterviews(interviewIDs)
+// POST /interview
+func (s *service) Get(postIds api.GetRequest) (response api.GetResponse, err error) {
+	resp, err := s.interviewStorage.SelectInterviews(postIds.Ids)
 	if err != nil {
 		return
 	}
@@ -52,7 +53,16 @@ func (s *service) Get(interviewIDs []int) (response models.InterviewsRequest, er
 	return
 }
 
-func (s *service) GetResult(interviewID int) (response models.InterviewResult, err error) {
+// POST /interview/remove
+func (s *service) Remove(interviewIds api.RemoveRequest) (response api.RemoveRequest, err error) {
+	ids, err := s.interviewStorage.RemoveInterviews(interviewIds.Ids)
+	if err == nil {
+		response.Ids = ids
+	}
+	return
+}
+
+func (s *service) GetResult(interviewID models.InterviewID) (response models.InterviewResult, err error) {
 	response.InterviewFrame, err = s.interviewStorage.SelectInterview(interviewID)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -66,7 +76,7 @@ func (s *service) GetResult(interviewID int) (response models.InterviewResult, e
 	return
 }
 
-func (s *service) GetResults(interviewIDs []int) (response []models.InterviewResult, err error) {
+func (s *service) GetResults(interviewIDs []models.InterviewID) (response []models.InterviewResult, err error) {
 	panic("implement me")
 }
 

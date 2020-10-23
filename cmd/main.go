@@ -2,9 +2,10 @@ package main
 
 import (
 	"database/sql"
+	httputils "github.com/Solar-2020/GoUtils/http"
+	"github.com/Solar-2020/GoUtils/http/errorWorker"
 	"github.com/Solar-2020/Interview-Backend/cmd/handlers"
 	interviewHandler "github.com/Solar-2020/Interview-Backend/cmd/handlers/interview"
-	"github.com/Solar-2020/Interview-Backend/internal/errorWorker"
 	"github.com/Solar-2020/Interview-Backend/internal/services/interview"
 	"github.com/Solar-2020/Interview-Backend/internal/storages/answerStorage"
 	"github.com/Solar-2020/Interview-Backend/internal/storages/interviewStorage"
@@ -54,7 +55,7 @@ func main() {
 
 	interviewHandler := interviewHandler.NewHandler(interviewService, interviewTransport, errorWorker)
 
-	middlewares := handlers.NewMiddleware()
+	middlewares := httputils.NewMiddleware()
 
 	server := fasthttp.Server{
 		Handler: handlers.NewFastHttpRouter(interviewHandler, middlewares).Handler,

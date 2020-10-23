@@ -14,9 +14,9 @@ jobs:
       - name: Branch name
         run: echo running on branch ${GITHUB_REF##*/}
       - name: Build Docker image
-        run: docker build -t tamerlanchik/solar_interview_${GITHUB_REF##*/}:${GITHUB_SHA} .
+        run: docker build -t tamerlanchik/solar_interview_${GITHUB_REF##*/}:${GITHUB_SHA} -t tamerlanchik/solar_interview_${GITHUB_REF##*/}:latest .
       - name: Push the image
-        run: docker push tamerlanchik/solar_interview_${GITHUB_REF##*/}:${GITHUB_SHA}
+        run: docker push tamerlanchik/solar_interview_${GITHUB_REF##*/}
 
   deploy:
     runs-on: ubuntu-latest

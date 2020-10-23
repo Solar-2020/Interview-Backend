@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/Solar-2020/Interview-Backend/pkg/api"
 	"github.com/Solar-2020/Interview-Backend/pkg/models"
+	"github.com/go-playground/validator"
 	"github.com/valyala/fasthttp"
 	"strconv"
 )
@@ -29,14 +30,21 @@ type Transport interface {
 }
 
 type transport struct {
+	validator *validator.Validate
 }
 
 func NewTransport() Transport {
-	return &transport{}
+	return &transport{
+		validator: validator.New(),
+	}
 }
 
 func (t *transport) CreateDecode(ctx *fasthttp.RequestCtx) (request api.CreateRequest, err error) {
 	err = json.Unmarshal(ctx.Request.Body(), &request)
+	if err != nil {
+		return
+	}
+	err = t.validator.Struct(request)
 	return
 }
 
@@ -51,8 +59,12 @@ func (t *transport) CreateEncode(response api.CreateResponse, ctx *fasthttp.Requ
 	return
 }
 
-func (t *transport) GetDecode(ctx *fasthttp.RequestCtx) (interviewIDs api.GetRequest, err error) {
-	err = json.Unmarshal(ctx.Request.Body(), &interviewIDs)
+func (t *transport) GetDecode(ctx *fasthttp.RequestCtx) (request api.GetRequest, err error) {
+	err = json.Unmarshal(ctx.Request.Body(), &request)
+	if err != nil {
+		return
+	}
+	err = t.validator.Struct(request)
 	return
 }
 
@@ -70,18 +82,23 @@ func (t transport) GetEncode(response api.GetResponse, ctx *fasthttp.RequestCtx)
 
 func (t transport) RemoveDecode(ctx *fasthttp.RequestCtx) (request api.RemoveRequest, err error) {
 	err = json.Unmarshal(ctx.Request.Body(), &request)
+	if err != nil {
+		return
+	}
+	err = t.validator.Struct(request)
 	return
 }
 
-func (t transport) GetResultDecode(ctx *fasthttp.RequestCtx) (interviewID models.InterviewID, err error) {
+func (t transport) GetResultDecode(ctx *fasthttp.RequestCtx) (request models.InterviewID, err error) {
 	//userID := ctx.Value("UserID").(int)
 	//userID := 1
 	//TODO THINK ABOUT CHECK PERMISSION
 	interviewIDStr := ctx.UserValue("interviewID").(string)
 	tmp, err := strconv.Atoi(interviewIDStr)
 	if err != nil {
-		interviewID = models.InterviewID(tmp)
+		return
 	}
+	request = models.InterviewID(tmp)
 	return
 }
 
@@ -96,8 +113,13 @@ func (t transport) GetResultEncode(response models.InterviewResult, ctx *fasthtt
 	return
 }
 
-func (t transport) GetResultsDecode(ctx *fasthttp.RequestCtx) (interviewIDs []models.InterviewID, err error) {
-	panic("implement me")
+func (t transport) GetResultsDecode(ctx *fasthttp.RequestCtx) (request []models.InterviewID, err error) {
+	err = json.Unmarshal(ctx.Request.Body(), &request)
+	if err != nil {
+		return
+	}
+	err = t.validator.Struct(request)
+	return
 }
 
 func (t transport) GetResultsEncode(response []models.InterviewResult, ctx *fasthttp.RequestCtx) (err error) {

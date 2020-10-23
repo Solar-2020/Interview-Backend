@@ -7,8 +7,8 @@ import (
 
 // POST /interview/create
 type CreateRequest struct {
-	Interviews []models.Interview `json:"interviews"`
-	PostID int                    `json:"postID"`
+	Interviews []models.Interview `json:"interviews" validate:"required"`
+	PostID int                    `json:"postID" validate:"required"`
 }
 
 type CreateResponse struct {
@@ -21,7 +21,7 @@ func (r *CreateResponse) Decode(src []byte) (err error) {
 
 // POST /interview
 type GetRequest struct {
-	Ids []int	`json:"posts"`
+	Ids []int	`json:"posts" validate:"required"`
 }
 
 type GetResponse struct {
@@ -34,7 +34,7 @@ func (r *GetResponse) Decode(src []byte) (err error) {
 
 // POST /interview/remove
 type RemoveRequest struct {
-	Ids []models.InterviewID `json:"ids"`
+	Ids []models.InterviewID `json:"ids" validate:"required"`
 }
 
 type RemoveResponse struct {
@@ -47,7 +47,7 @@ func (r *RemoveResponse) Decode(src []byte) (err error) {
 
 // GET /interview/result/:id
 type ResultRequest struct {
-	Id models.InterviewID `json:"id"`
+	Id models.InterviewID `json:"id" validate:"required"`
 }
 
 type ResultResponse struct {

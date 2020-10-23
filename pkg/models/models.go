@@ -36,7 +36,7 @@ type AnswerResult struct {
 
 type UserAnswer struct {
 	ID          VoteID `json:"id"`
-	InterviewID InterviewID `json:"interviewID"`
+	InterviewID InterviewID `json:"interviewID" validate:"required"`
 }
 
 type UserAnswers struct {

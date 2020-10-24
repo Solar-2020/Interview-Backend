@@ -14,6 +14,7 @@ type Storage interface {
 	SelectAnswersResult(interviewID models.InterviewID) (answers []models.AnswerResult, err error)
 	SelectAnswersResults(interviewIDs []models.InterviewID) (answers []models.AnswerResult, err error)
 
+	SelectUserAnswer(interviewIDs models.InterviewID, userID int) (answers []models.UserAnswer, err error)
 	SelectUserAnswers(interviewIDs []models.InterviewID, userID int) (answers []models.UserAnswer, err error)
 }
 
@@ -208,5 +209,12 @@ func (s *storage) SelectUserAnswers(interviewIDs []models.InterviewID, userID in
 		answers = append(answers, tempAnswer)
 	}
 
+	return
+}
+
+func (s *storage) SelectUserAnswer(interviewID models.InterviewID, userID int) (answers []models.UserAnswer, err error) {
+	interviewIDs := make([]models.InterviewID, 1)
+	interviewIDs = append(interviewIDs, interviewID)
+	answers, err = s.SelectUserAnswers(interviewIDs, userID)
 	return
 }

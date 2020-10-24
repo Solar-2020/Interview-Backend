@@ -118,7 +118,7 @@ func (h *handler) Remove(ctx *fasthttp.RequestCtx) {
 }
 
 func (h *handler) GetResult(ctx *fasthttp.RequestCtx) {
-	interviewID, err := h.interviewTransport.GetResultDecode(ctx)
+	interviewID, userID, err := h.interviewTransport.GetResultDecode(ctx)
 	if err != nil {
 		err = h.errorWorker.ServeJSONError(ctx, err)
 		if err != nil {
@@ -127,7 +127,7 @@ func (h *handler) GetResult(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	interviewResult, err := h.interviewService.GetResult(interviewID)
+	interviewResult, err := h.interviewService.GetResult(interviewID, userID)
 	if err != nil {
 		err = h.errorWorker.ServeJSONError(ctx, err)
 		if err != nil {

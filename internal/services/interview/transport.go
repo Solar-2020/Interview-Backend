@@ -19,7 +19,7 @@ type Transport interface {
 	RemoveDecode(ctx *fasthttp.RequestCtx) (request api.RemoveRequest, err error)
 	//RemoveEncode(response models.RemoveResponse, ctx *fasthttp.RequestCtx) (err error)
 
-	GetResultDecode(ctx *fasthttp.RequestCtx) (interviewID models.InterviewID, err error)
+	GetResultDecode(ctx *fasthttp.RequestCtx) (interviewID models.InterviewID, userID int, err error)
 	GetResultEncode(response models.InterviewResult, ctx *fasthttp.RequestCtx) (err error)
 
 	GetUniversalDecode(ctx *fasthttp.RequestCtx) (request api.GetUniversalRequest, err error)
@@ -89,9 +89,9 @@ func (t transport) RemoveDecode(ctx *fasthttp.RequestCtx) (request api.RemoveReq
 	return
 }
 
-func (t transport) GetResultDecode(ctx *fasthttp.RequestCtx) (request models.InterviewID, err error) {
+func (t transport) GetResultDecode(ctx *fasthttp.RequestCtx) (request models.InterviewID, userID int, err error) {
 	//userID := ctx.Value("UserID").(int)
-	//userID := 1
+	userID = 1
 	//TODO THINK ABOUT CHECK PERMISSION
 	interviewIDStr := ctx.UserValue("interviewID").(string)
 	tmp, err := strconv.Atoi(interviewIDStr)

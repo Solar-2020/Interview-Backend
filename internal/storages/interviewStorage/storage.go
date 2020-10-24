@@ -17,6 +17,7 @@ type Storage interface {
 	RemoveInterviews(ids []models.InterviewID) (removed []models.InterviewID, err error)
 
 	SelectInterview(interviewID models.InterviewID) (interview models.InterviewFrame, err error)
+	SelectInterviewWithStatus(interviewID models.InterviewID, userID int) (interview models.InterviewFrame, err error)
 }
 
 type storage struct {
@@ -289,5 +290,26 @@ func (s *storage) SelectInterview(interviewID models.InterviewID) (interview mod
 		return
 	}
 
+	return
+}
+
+func (s *storage) SelectInterviewWithStatus(interviewID models.InterviewID, userID int) (interview models.InterviewFrame, err error) {
+	const sqlQuery = `
+	SELECT i.id, i.text, i.type, i.post_id,
+		   (SELECT count(*)
+			FROM users_answers AS ua
+			WHERE ua.user_id = $1
+			  AND ua.interview_id = i.post_id)
+	FROM interviews AS i
+	WHERE i.id = $2;`
+
+	err = s.db.QueryRow(sqlQuery, userID, interviewID).Scan(&interview.ID, &interview.Text, &interview.Type, &interview.PostID, &interview.Status)
+	if err != nil {
+		return
+	}
+
+	if interview.Status != 0 {
+		interview.Status = 1
+	}
 	return
 }

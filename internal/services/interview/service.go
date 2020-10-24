@@ -12,7 +12,7 @@ type Service interface {
 	Get(postIds api.GetRequest) (response api.GetResponse, err error)
 	Remove(interviewIds api.RemoveRequest) (response api.RemoveRequest, err error)
 
-	GetResult(interviewID models.InterviewID) (response models.InterviewResult, err error)
+	GetResult(interviewID models.InterviewID, userID int) (response models.InterviewResult, err error)
 	GetUniversal(request api.GetUniversalRequest) (response api.GetUniversalResponse, err error)
 
 	SetAnswers(answers models.UserAnswers) (response models.InterviewResult, err error)
@@ -62,8 +62,8 @@ func (s *service) Remove(interviewIds api.RemoveRequest) (response api.RemoveReq
 	return
 }
 
-func (s *service) GetResult(interviewID models.InterviewID) (response models.InterviewResult, err error) {
-	response.InterviewFrame, err = s.interviewStorage.SelectInterview(interviewID)
+func (s *service) GetResult(interviewID models.InterviewID, userID int) (response models.InterviewResult, err error) {
+	response.InterviewFrame, err = s.interviewStorage.SelectInterviewWithStatus(interviewID, userID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return response, errors.New("Опрос не найден")
@@ -72,6 +72,22 @@ func (s *service) GetResult(interviewID models.InterviewID) (response models.Int
 	}
 
 	response.Answers, err = s.answerStorage.SelectAnswersResult(interviewID)
+	if err != nil {
+		return
+	}
+
+	userAnswers, err := s.answerStorage.SelectUserAnswer(response.ID, userID)
+	if err != nil {
+		return
+	}
+
+	for i, _ := range response.Answers {
+		for j, _ := range userAnswers {
+			if int(response.Answers[i].ID) == int(userAnswers[j].ID) {
+				response.Answers[i].IsMyAnswer = true
+			}
+		}
+	}
 
 	return
 }
@@ -125,7 +141,7 @@ func (s *service) SetAnswers(answers models.UserAnswers) (response models.Interv
 		return
 	}
 
-	response, err = s.GetResult(answers.InterviewID)
+	response, err = s.GetResult(answers.InterviewID, answers.UserID)
 
 	return
 }

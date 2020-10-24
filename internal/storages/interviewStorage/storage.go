@@ -165,7 +165,7 @@ func (s *storage) SelectInterviewsWithStatus(postIDs []int, userID int) (intervi
 		   (SELECT count(*)
 			FROM users_answers AS ua
 			WHERE ua.user_id = $1
-			  AND ua.interview_id = i.post_id)
+			  AND ua.post_id = i.post_id)
 	FROM interviews AS i
 	WHERE i.post_id IN `
 

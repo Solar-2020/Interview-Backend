@@ -10,6 +10,8 @@ type interviewStorage interface {
 	RemoveInterviews(ids []models.InterviewID) (removed []models.InterviewID, err error)
 
 	SelectInterview(interviewID models.InterviewID) (interview models.InterviewFrame, err error)
+
+	SelectInterviewsWithStatus(postIDs []int, userID int) (interviews []models.InterviewResult, err error)
 }
 
 type answerStorage interface {
@@ -17,4 +19,6 @@ type answerStorage interface {
 
 	SelectAnswersResult(interviewID models.InterviewID) (answers []models.AnswerResult, err error)
 	SelectAnswersResults(interviewIDs []models.InterviewID) (answers []models.AnswerResult, err error)
+
+	SelectUserAnswers(interviewIDs []models.InterviewID, userID int) (answers []models.UserAnswer, err error)
 }

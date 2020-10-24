@@ -13,7 +13,7 @@ type Service interface {
 	Remove(interviewIds api.RemoveRequest) (response api.RemoveRequest, err error)
 
 	GetResult(interviewID models.InterviewID) (response models.InterviewResult, err error)
-	GetResults(interviewIDs []models.InterviewID) (response []models.InterviewResult, err error)
+	GetUniversal(request api.GetUniversalRequest) (response api.GetUniversalResponse, err error)
 
 	SetAnswers(answers models.UserAnswers) (response models.InterviewResult, err error)
 }
@@ -76,8 +76,45 @@ func (s *service) GetResult(interviewID models.InterviewID) (response models.Int
 	return
 }
 
-func (s *service) GetResults(interviewIDs []models.InterviewID) (response []models.InterviewResult, err error) {
-	panic("implement me")
+func (s *service) GetUniversal(request api.GetUniversalRequest) (response api.GetUniversalResponse, err error) {
+	interviews, err := s.interviewStorage.SelectInterviewsWithStatus(request.PostIDs, request.UserID)
+	if err != nil {
+		return
+	}
+
+	interviewIDs := make([]models.InterviewID, 0)
+	for i, _ := range interviews {
+		interviewIDs = append(interviewIDs, interviews[i].ID)
+	}
+
+	answers, err := s.answerStorage.SelectAnswersResults(interviewIDs)
+	if err != nil {
+		return
+	}
+
+	userAnswers, err := s.answerStorage.SelectUserAnswers(interviewIDs, request.UserID)
+	if err != nil {
+		return
+	}
+
+	for i, _ := range answers {
+		for j, _ := range userAnswers {
+			if int(answers[i].ID) == int(userAnswers[j].ID) {
+				answers[i].IsMyAnswer = true
+			}
+		}
+	}
+
+	for i, _ := range interviews {
+		for j, _ := range answers {
+			if interviews[i].ID == answers[j].InterviewID {
+				interviews[i].Answers = append(interviews[i].Answers, answers[j])
+			}
+		}
+	}
+
+	response.Interviews = interviews
+	return
 }
 
 func (s *service) SetAnswers(answers models.UserAnswers) (response models.InterviewResult, err error) {

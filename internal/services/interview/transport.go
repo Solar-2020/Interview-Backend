@@ -22,8 +22,8 @@ type Transport interface {
 	GetResultDecode(ctx *fasthttp.RequestCtx) (interviewID models.InterviewID, err error)
 	GetResultEncode(response models.InterviewResult, ctx *fasthttp.RequestCtx) (err error)
 
-	GetResultsDecode(ctx *fasthttp.RequestCtx) (interviewIDs []models.InterviewID, err error)
-	GetResultsEncode(response []models.InterviewResult, ctx *fasthttp.RequestCtx) (err error)
+	GetUniversalDecode(ctx *fasthttp.RequestCtx) (request api.GetUniversalRequest, err error)
+	GetUniversalEncode(response api.GetUniversalResponse, ctx *fasthttp.RequestCtx) (err error)
 
 	SetAnswerDecode(ctx *fasthttp.RequestCtx) (request models.UserAnswers, err error)
 	SetAnswerEncode(response models.InterviewResult, ctx *fasthttp.RequestCtx) (err error)
@@ -113,7 +113,7 @@ func (t transport) GetResultEncode(response models.InterviewResult, ctx *fasthtt
 	return
 }
 
-func (t transport) GetResultsDecode(ctx *fasthttp.RequestCtx) (request []models.InterviewID, err error) {
+func (t transport) GetUniversalDecode(ctx *fasthttp.RequestCtx) (request api.GetUniversalRequest, err error) {
 	err = json.Unmarshal(ctx.Request.Body(), &request)
 	if err != nil {
 		return
@@ -122,8 +122,16 @@ func (t transport) GetResultsDecode(ctx *fasthttp.RequestCtx) (request []models.
 	return
 }
 
-func (t transport) GetResultsEncode(response []models.InterviewResult, ctx *fasthttp.RequestCtx) (err error) {
-	panic("implement me")
+func (t transport) GetUniversalEncode(response api.GetUniversalResponse, ctx *fasthttp.RequestCtx) (err error) {
+	body, err := json.Marshal(response)
+	if err != nil {
+		return
+	}
+	ctx.Response.Header.SetContentType("application/json")
+	ctx.Response.Header.SetStatusCode(fasthttp.StatusOK)
+	ctx.SetBody(body)
+
+	return
 }
 
 func (t transport) SetAnswerDecode(ctx *fasthttp.RequestCtx) (request models.UserAnswers, err error) {

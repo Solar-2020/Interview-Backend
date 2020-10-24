@@ -21,8 +21,9 @@ func NewFastHttpRouter(interview interviewHandler.Handler, middleware httputils.
 	router.Handle("POST", "/interview/result/:interviewID", middlewareChain(interview.SetAnswer))
 	router.Handle("GET", "/interview/result/:interviewID", middlewareChain(interview.GetResult))
 
+	router.Handle("POST", "/interview/list", middlewareChain(interview.GetUniversal))
+
 	//router.Handle("POST", "/interview/interview", middleware.CORS(interview.Create))
 
 	return router
 }
-

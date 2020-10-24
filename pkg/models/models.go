@@ -3,14 +3,14 @@ package models
 type InterviewID int
 type AnswerID int
 type VoteID int
-type InterviewType  int
+type InterviewType int
 
 type InterviewFrame struct {
-	ID     InterviewID    `json:"id"`
-	Text   string `json:"text"`
-	Type   InterviewType    `json:"type"`
-	PostID int    `json:"postID"`
-	Status int    `json:"status"` //Проголосовал юзер или нет
+	ID     InterviewID   `json:"id"`
+	Text   string        `json:"text"`
+	Type   InterviewType `json:"type"`
+	PostID int           `json:"postID"`
+	Status int           `json:"status"` //Проголосовал юзер или нет
 }
 
 type Interview struct {
@@ -20,8 +20,8 @@ type Interview struct {
 
 type Answer struct {
 	ID          AnswerID    `json:"id"`
-	Text        string `json:"text"`
-	InterviewID InterviewID    `json:"interviewID"`
+	Text        string      `json:"text"`
+	InterviewID InterviewID `json:"interviewID"`
 }
 
 type InterviewResult struct {
@@ -31,17 +31,18 @@ type InterviewResult struct {
 
 type AnswerResult struct {
 	Answer
-	AnswerCount int `json:"answerCount"`
+	AnswerCount int  `json:"answerCount"`
+	IsMyAnswer  bool `json:"isMyAnswer"`
 }
 
 type UserAnswer struct {
-	ID          VoteID `json:"id"`
+	ID          VoteID      `json:"id"`
 	InterviewID InterviewID `json:"interviewID" validate:"required"`
 }
 
 type UserAnswers struct {
-	PostID      int   `json:"postID"`
-	InterviewID InterviewID   `json:"interviewID"`
-	UserID      int   `json:"-"`
-	AnswerIDs   []AnswerID `json:"answers"`
+	PostID      int         `json:"postID"`
+	InterviewID InterviewID `json:"interviewID"`
+	UserID      int         `json:"-"`
+	AnswerIDs   []AnswerID  `json:"answers"`
 }

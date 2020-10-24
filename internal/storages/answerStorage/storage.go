@@ -13,6 +13,8 @@ type Storage interface {
 
 	SelectAnswersResult(interviewID models.InterviewID) (answers []models.AnswerResult, err error)
 	SelectAnswersResults(interviewIDs []models.InterviewID) (answers []models.AnswerResult, err error)
+
+	SelectUserAnswers(interviewIDs []models.InterviewID, userID int) (answers []models.UserAnswer, err error)
 }
 
 type storage struct {
@@ -117,6 +119,9 @@ func (s *storage) InsertUserAnswers(answers models.UserAnswers) (err error) {
 }
 
 func (s *storage) SelectAnswersResults(interviewIDs []models.InterviewID) (answers []models.AnswerResult, err error) {
+	if len(interviewIDs) == 0 {
+		return
+	}
 	const sqlQueryTemplate = `
 	SELECT a.id,
 		   a.text,
@@ -161,5 +166,47 @@ func (s *storage) SelectAnswersResult(interviewID models.InterviewID) (answers [
 	interviewIDs := make([]models.InterviewID, 1)
 	interviewIDs = append(interviewIDs, interviewID)
 	answers, err = s.SelectAnswersResults(interviewIDs)
+	return
+}
+
+func (s *storage) SelectUserAnswers(interviewIDs []models.InterviewID, userID int) (answers []models.UserAnswer, err error) {
+	if len(interviewIDs) == 0 {
+		return
+	}
+	const sqlQueryTemplate = `
+	SELECT ua.answer_id,
+		   ua.interview_id
+	FROM users_answers AS ua
+	WHERE ua.user_id = $1 AND ua.interview_id IN `
+
+	sqlQuery := sqlQueryTemplate + sqlutils.CreateIN(len(interviewIDs))
+
+	var params []interface{}
+
+	params = append(params, userID)
+
+	for i, _ := range interviewIDs {
+		params = append(params, interviewIDs[i])
+	}
+
+	for i := 2; i <= len(interviewIDs)*1+1; i++ {
+		sqlQuery = strings.Replace(sqlQuery, "?", "$"+strconv.Itoa(i), 1)
+	}
+
+	rows, err := s.db.Query(sqlQuery, params...)
+	if err != nil {
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var tempAnswer models.UserAnswer
+		err = rows.Scan(&tempAnswer.ID, &tempAnswer.InterviewID)
+		if err != nil {
+			return
+		}
+		answers = append(answers, tempAnswer)
+	}
+
 	return
 }

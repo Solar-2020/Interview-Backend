@@ -12,6 +12,8 @@ import (
 type Storage interface {
 	InsertInterviews(interviews []models.Interview, postID int) (err error)
 	SelectInterviews(postIDs []int) (interviews []models.Interview, err error)
+	SelectInterviewsWithStatus(postIDs []int, userID int) (interviews []models.InterviewResult, err error)
+
 	RemoveInterviews(ids []models.InterviewID) (removed []models.InterviewID, err error)
 
 	SelectInterview(interviewID models.InterviewID) (interview models.InterviewFrame, err error)
@@ -146,6 +148,61 @@ func (s *storage) SelectInterviews(postIDs []int) (interviews []models.Interview
 			}
 		}
 	}
+	return
+}
+
+func (s *storage) SelectInterviewsWithStatus(postIDs []int, userID int) (interviews []models.InterviewResult, err error) {
+	interviews = make([]models.InterviewResult, 0)
+	if len(postIDs) == 0 {
+		return
+	}
+	const sqlQueryTemplate = `
+	SELECT i.id,
+		   i.text,
+		   i.type,
+		   i.post_id,
+		   (SELECT count(*)
+			FROM users_answers AS ua
+			WHERE ua.user_id = $1
+			  AND ua.interview_id = i.post_id)
+	FROM interviews AS i
+	WHERE i.post_id IN `
+
+	sqlQuery := sqlQueryTemplate + sqlutils.CreateIN(len(postIDs))
+
+	var params []interface{}
+
+	params = append(params, userID)
+
+	for i, _ := range postIDs {
+		params = append(params, postIDs[i])
+	}
+
+	for i := 2; i <= len(postIDs)*1+1; i++ {
+		sqlQuery = strings.Replace(sqlQuery, "?", "$"+strconv.Itoa(i), 1)
+	}
+
+	rows, err := s.db.Query(sqlQuery, params...)
+	if err != nil {
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var tempInterview models.InterviewResult
+		err = rows.Scan(&tempInterview.ID, &tempInterview.Text, &tempInterview.Type, &tempInterview.PostID, &tempInterview.Status)
+		if err != nil {
+			return
+		}
+
+		if tempInterview.Status != 0 {
+			tempInterview.Status = 1
+		}
+
+		tempInterview.Answers = make([]models.AnswerResult, 0)
+		interviews = append(interviews, tempInterview)
+	}
+
 	return
 }
 

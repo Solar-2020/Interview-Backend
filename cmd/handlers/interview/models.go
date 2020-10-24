@@ -11,7 +11,7 @@ import (
 //	Get(interviewIDs []int) (response models.InterviewsRequest, err error)
 //
 //	GetResult(interviewID int) (response models.InterviewResult, err error)
-//	GetResults(interviewIDs []int) (response []models.InterviewResult, err error)
+//	GetUniversal(interviewIDs []int) (response []models.InterviewResult, err error)
 //
 //	SetAnswers(answers models.UserAnswers) (response models.InterviewResult, err error)
 //	//GetList(request models.GetPostListRequest) (response []models.Post, err error)
@@ -29,8 +29,8 @@ type interviewTransport interview.Transport
 //	GetResultDecode(ctx *fasthttp.RequestCtx) (interviewID int, err error)
 //	GetResultEncode(response models.InterviewResult, ctx *fasthttp.RequestCtx) (err error)
 //
-//	GetResultsDecode(ctx *fasthttp.RequestCtx) (interviewIDs []int, err error)
-//	GetResultsEncode(response []models.InterviewResult, ctx *fasthttp.RequestCtx) (err error)
+//	GetUniversalDecode(ctx *fasthttp.RequestCtx) (interviewIDs []int, err error)
+//	GetUniversalEncode(response []models.InterviewResult, ctx *fasthttp.RequestCtx) (err error)
 //
 //	SetAnswerDecode(ctx *fasthttp.RequestCtx) (request models.UserAnswers, err error)
 //	SetAnswerEncode(response models.InterviewResult, ctx *fasthttp.RequestCtx) (err error)

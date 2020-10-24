@@ -9,6 +9,7 @@ import (
 type Handler interface {
 	Create(ctx *fasthttp.RequestCtx)
 	Get(ctx *fasthttp.RequestCtx)
+	GetUniversal(ctx *fasthttp.RequestCtx)
 	Remove(ctx *fasthttp.RequestCtx)
 
 	GetResult(ctx *fasthttp.RequestCtx)
@@ -18,14 +19,14 @@ type Handler interface {
 type handler struct {
 	interviewService   interview.Service
 	interviewTransport interviewTransport
-	errorWorker   errorWorker
+	errorWorker        errorWorker
 }
 
 func NewHandler(interviewService interview.Service, interviewTransport interviewTransport, errorWorker errorWorker) Handler {
 	return &handler{
 		interviewService:   interviewService,
 		interviewTransport: interviewTransport,
-		errorWorker:   errorWorker,
+		errorWorker:        errorWorker,
 	}
 }
 
@@ -172,6 +173,33 @@ func (h *handler) SetAnswer(ctx *fasthttp.RequestCtx) {
 		}
 		return
 	}
-
 }
 
+func (h *handler) GetUniversal(ctx *fasthttp.RequestCtx) {
+	request, err := h.interviewTransport.GetUniversalDecode(ctx)
+	if err != nil {
+		err = h.errorWorker.ServeJSONError(ctx, err)
+		if err != nil {
+			h.errorWorker.ServeFatalError(ctx)
+		}
+		return
+	}
+
+	response, err := h.interviewService.GetUniversal(request)
+	if err != nil {
+		err = h.errorWorker.ServeJSONError(ctx, err)
+		if err != nil {
+			h.errorWorker.ServeFatalError(ctx)
+		}
+		return
+	}
+
+	err = h.interviewTransport.GetUniversalEncode(response, ctx)
+	if err != nil {
+		err = h.errorWorker.ServeJSONError(ctx, err)
+		if err != nil {
+			h.errorWorker.ServeFatalError(ctx)
+		}
+		return
+	}
+}

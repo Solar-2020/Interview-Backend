@@ -1,7 +1,13 @@
 github.com/DATA-DOG/go-sqlmock v1.5.0 h1:Shsta01QNfFxHCfpW6YH2STWB0MudeXXEWMr20OEh60=
 github.com/DATA-DOG/go-sqlmock v1.5.0/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
-github.com/Solar-2020/GoUtils v0.0.0-20201024095230-8f259c1d6837 h1:uWBKefwFhuEuL+BXb+cvCrQejp4P5iaxoSu+Qj9fss0=
-github.com/Solar-2020/GoUtils v0.0.0-20201024095230-8f259c1d6837/go.mod h1:S+8e42EZ+g2yD2fcSDn1eag4IEhAXryx5pjxgt7OxNU=
+github.com/Solar-2020/Authorization-Backend v0.0.0-20201023140203-006ac9d46b01/go.mod h1:UEtA47dpMdxZrtxAczlMZcumEa/yq+r4TX4PLkxWGr4=
+github.com/Solar-2020/Authorization-Backend v0.0.0-20201027204158-15670a9b5d96 h1:vIDtDHfz/QpQGbYGY6vJN9gj6oJwA0m8MrIYTNwRwUU=
+github.com/Solar-2020/Authorization-Backend v0.0.0-20201027204158-15670a9b5d96/go.mod h1:6Jy1cLGSIUoL1iJghRw0yYX8dEvZ7M1klGXm0RWCVk4=
+github.com/Solar-2020/GoUtils v0.0.0-20201026171357-1ce3d6989804/go.mod h1:JgUyQ2m5+AxfNqe6/llRQGOxCeisBqBn/sp3Wt/elhU=
+github.com/Solar-2020/GoUtils v0.0.0-20201027194059-562c66fd0229 h1:PN1Nps2t0eI0a6KHFczS4KqTwFwFypqVyx4rqnitRUA=
+github.com/Solar-2020/GoUtils v0.0.0-20201027194059-562c66fd0229/go.mod h1:Wu4hDJE3n5Fc5YbM7iXETrYWXso2HKSWdlZUz4cA1Ng=
+github.com/Solar-2020/GoUtils v0.0.0-20201028101120-e64028df446a h1:x6n8eHqsmwHuVo7hj0Urnp41DEW07UY1epFqFRKfEnQ=
+github.com/Solar-2020/GoUtils v0.0.0-20201028101120-e64028df446a/go.mod h1:JgUyQ2m5+AxfNqe6/llRQGOxCeisBqBn/sp3Wt/elhU=
 github.com/andybalholm/brotli v1.0.0 h1:7UCwP93aiSfvWpapti8g88vVVGp2qqtGyePsSuDafo4=
 github.com/andybalholm/brotli v1.0.0/go.mod h1:loMXtMfwqflxFJPmdbJO0a3KNoPuLBgiu3qAvBg8x/Y=
 github.com/buaazp/fasthttprouter v0.1.1 h1:4oAnN0C3xZjylvZJdP35cxfclyn4TYkW6Y+DSvS+h8Q=

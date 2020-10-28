@@ -12,16 +12,16 @@ func NewFastHttpRouter(interview interviewHandler.Handler, middleware httputils.
 	router.PanicHandler = httputils.PanicHandler
 	router.Handle("GET", "/health", middleware.Log(httputils.HealthCheckHandler))
 
-	middlewareChain := httputils.NewLogCorsChain(middleware)
+	clientside := httputils.ClientsideChain(middleware)
 
-	router.Handle("POST", "/interview/create", middlewareChain(interview.Create))
-	router.Handle("POST", "/interview", middlewareChain(interview.Get))
-	router.Handle("POST", "/interview/remove", middlewareChain(interview.Remove))
+	router.Handle("POST", "/interview/create", clientside(interview.Create))
+	router.Handle("POST", "/interview", clientside(interview.Get))
+	router.Handle("POST", "/interview/remove", clientside(interview.Remove))
 
-	router.Handle("POST", "/interview/result/:interviewID", middlewareChain(interview.SetAnswer))
-	router.Handle("GET", "/interview/result/:interviewID", middlewareChain(interview.GetResult))
+	router.Handle("POST", "/interview/result/:interviewID",clientside(interview.SetAnswer))
+	router.Handle("GET", "/interview/result/:interviewID", clientside(interview.GetResult))
 
-	router.Handle("POST", "/interview/list", middlewareChain(interview.GetUniversal))
+	router.Handle("POST", "/interview/list", clientside(interview.GetUniversal))
 
 	//router.Handle("POST", "/interview/interview", middleware.CORS(interview.Create))
 

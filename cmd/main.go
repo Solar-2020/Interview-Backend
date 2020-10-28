@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	asapi "github.com/Solar-2020/Account-Backend/pkg/api"
 	authapi "github.com/Solar-2020/Authorization-Backend/pkg/api"
 	"github.com/Solar-2020/GoUtils/context/session"
 	httputils "github.com/Solar-2020/GoUtils/http"
@@ -61,6 +62,11 @@ func main() {
 		Addr:    config.Config.AuthServiceAddress,
 	}
 	session.RegisterAuthService(&authService)
+
+	accountService := asapi.AccountClient{
+		Addr:    config.Config.AccountServiceAddress,
+	}
+	session.RegisterAccountService(&accountService)
 
 	middlewares := httputils.NewMiddleware()
 

@@ -1,11 +1,12 @@
 package config
 
+import "github.com/Solar-2020/GoUtils/common"
+
 var (
 	Config config
 )
 
 type config struct {
-	Port string `envconfig:"PORT" default:"8099"`
+	common.SharedConfig
 	InterviewDataBaseConnectionString  string `envconfig:"INTERVIEW_DB_CONNECTION_STRING" default:"-"`
-	AuthServiceAddress			  string  `envconfig:"AUTH_SERVICE_ADDRESS" default:""`
 }

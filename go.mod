@@ -4,8 +4,8 @@ go 1.13
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
-	github.com/Solar-2020/Account-Backend v1.0.0
-	github.com/Solar-2020/Authorization-Backend v1.0.0
+	github.com/Solar-2020/Account-Backend v1.0.1
+	github.com/Solar-2020/Authorization-Backend v1.0.1
 	github.com/Solar-2020/GoUtils v1.0.1
 	// github.com/Solar-2020/GoUtils v0.0.0-20201027194059-562c66fd0229
 	github.com/buaazp/fasthttprouter v0.1.1

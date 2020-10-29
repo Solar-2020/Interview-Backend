@@ -6,7 +6,7 @@ require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
 	github.com/Solar-2020/Account-Backend v1.0.0
 	github.com/Solar-2020/Authorization-Backend v1.0.0
-	github.com/Solar-2020/GoUtils v0.0.0-20201028130128-34e4f0f5a23d
+	github.com/Solar-2020/GoUtils v1.0.1
 	// github.com/Solar-2020/GoUtils v0.0.0-20201027194059-562c66fd0229
 	github.com/buaazp/fasthttprouter v0.1.1
 	github.com/go-park-mail-ru/2019_2_Next_Level v0.0.0-20191217231202-d92f16810f1e

@@ -18,6 +18,10 @@ github.com/Solar-2020/GoUtils v0.0.0-20201028101120-e64028df446a h1:x6n8eHqsmwHu
 github.com/Solar-2020/GoUtils v0.0.0-20201028101120-e64028df446a/go.mod h1:JgUyQ2m5+AxfNqe6/llRQGOxCeisBqBn/sp3Wt/elhU=
 github.com/Solar-2020/GoUtils v0.0.0-20201028130128-34e4f0f5a23d h1:8/YS6274xzbhMxPNRCmtuRchbLNya34PPWcfzogS5P0=
 github.com/Solar-2020/GoUtils v0.0.0-20201028130128-34e4f0f5a23d/go.mod h1:JgUyQ2m5+AxfNqe6/llRQGOxCeisBqBn/sp3Wt/elhU=
+github.com/Solar-2020/GoUtils v1.0.0 h1:HaXCnpdwi3na6b2VYxMc5/5M2HFZOMxTLlkTiwaII94=
+github.com/Solar-2020/GoUtils v1.0.0/go.mod h1:JgUyQ2m5+AxfNqe6/llRQGOxCeisBqBn/sp3Wt/elhU=
+github.com/Solar-2020/GoUtils v1.0.1 h1:BPjFb1YeXWWK80Bv7InPR1WKde8rvcQ2DmK0wKHQh+g=
+github.com/Solar-2020/GoUtils v1.0.1/go.mod h1:JgUyQ2m5+AxfNqe6/llRQGOxCeisBqBn/sp3Wt/elhU=
 github.com/andybalholm/brotli v1.0.0 h1:7UCwP93aiSfvWpapti8g88vVVGp2qqtGyePsSuDafo4=
 github.com/andybalholm/brotli v1.0.0/go.mod h1:loMXtMfwqflxFJPmdbJO0a3KNoPuLBgiu3qAvBg8x/Y=
 github.com/buaazp/fasthttprouter v0.1.1 h1:4oAnN0C3xZjylvZJdP35cxfclyn4TYkW6Y+DSvS+h8Q=

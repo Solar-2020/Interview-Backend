@@ -15,14 +15,14 @@ func NewFastHttpRouter(interview interviewHandler.Handler, middleware httputils.
 	clientside := httputils.ClientsideChain(middleware)
 	serverside := httputils.ServersideChain(middleware)
 
-	router.Handle("POST", "/interview/create", serverside(interview.Create))
-	router.Handle("POST", "/interview", serverside(interview.Get))
-	router.Handle("POST", "/interview/remove", clientside(interview.Remove))
+	router.Handle("POST", "/api/interview/create", serverside(interview.Create))
+	router.Handle("POST", "/api/interview", serverside(interview.Get))
+	router.Handle("POST", "/api/interview/remove", clientside(interview.Remove))
 
-	router.Handle("POST", "/interview/result/:interviewID",clientside(interview.SetAnswer))
-	router.Handle("GET", "/interview/result/:interviewID", clientside(interview.GetResult))
+	router.Handle("POST", "/api/interview/result/:interviewID",clientside(interview.SetAnswer))
+	router.Handle("GET", "/api/interview/result/:interviewID", clientside(interview.GetResult))
 
-	router.Handle("POST", "/interview/list", serverside(interview.GetUniversal))
+	router.Handle("POST", "/api/interview/list", serverside(interview.GetUniversal))
 
 	//router.Handle("POST", "/interview/interview", middleware.CORS(interview.Create))
 

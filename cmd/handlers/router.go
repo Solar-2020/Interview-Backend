@@ -6,23 +6,20 @@ import (
 	"github.com/buaazp/fasthttprouter"
 )
 
-func NewFastHttpRouter(interview interviewHandler.Handler, middleware httputils.Middleware) *fasthttprouter.Router {
+func NewFastHttpRouter(interview interviewHandler.Handler, middleware Middleware) *fasthttprouter.Router {
 	router := fasthttprouter.New()
 
 	router.PanicHandler = httputils.PanicHandler
 	router.Handle("GET", "/health", middleware.Log(httputils.HealthCheckHandler))
 
-	clientside := httputils.ClientsideChain(middleware)
-	serverside := httputils.ServersideChain(middleware)
+	router.Handle("POST", "/api/interview/create", middleware.Log(middleware.InternalAuth(interview.Create)))
+	router.Handle("POST", "/api/interview", middleware.Log(middleware.InternalAuth(interview.Get)))
+	router.Handle("POST", "/api/interview/remove", middleware.Log(middleware.InternalAuth(interview.Remove)))
 
-	router.Handle("POST", "/api/interview/create", serverside(interview.Create))
-	router.Handle("POST", "/api/interview", serverside(interview.Get))
-	router.Handle("POST", "/api/interview/remove", clientside(interview.Remove))
+	router.Handle("POST", "/api/interview/result/:interviewID", middleware.Log(middleware.ExternalAuth(interview.SetAnswer)))
+	router.Handle("GET", "/api/interview/result/:interviewID", middleware.Log(middleware.ExternalAuth(interview.GetResult)))
 
-	router.Handle("POST", "/api/interview/result/:interviewID",clientside(interview.SetAnswer))
-	router.Handle("GET", "/api/interview/result/:interviewID", clientside(interview.GetResult))
-
-	router.Handle("POST", "/api/interview/list", serverside(interview.GetUniversal))
+	router.Handle("POST", "/api/interview/list", middleware.Log(middleware.InternalAuth(interview.GetUniversal)))
 
 	//router.Handle("POST", "/interview/interview", middleware.CORS(interview.Create))
 

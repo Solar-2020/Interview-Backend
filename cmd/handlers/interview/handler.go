@@ -1,19 +1,19 @@
 package interviewHandler
 
 import (
-	"github.com/Solar-2020/GoUtils/context"
 	http "github.com/Solar-2020/GoUtils/http"
 	"github.com/Solar-2020/Interview-Backend/internal/services/interview"
+	"github.com/valyala/fasthttp"
 )
 
 type Handler interface {
-	Create(ctx context.Context)
-	Get(ctx context.Context)
-	GetUniversal(ctx context.Context)
-	Remove(ctx context.Context)
+	Create(ctx *fasthttp.RequestCtx)
+	Get(ctx *fasthttp.RequestCtx)
+	GetUniversal(ctx *fasthttp.RequestCtx)
+	Remove(ctx *fasthttp.RequestCtx)
 
-	GetResult(ctx context.Context)
-	SetAnswer(ctx context.Context)
+	GetResult(ctx *fasthttp.RequestCtx)
+	SetAnswer(ctx *fasthttp.RequestCtx)
 }
 
 type handler struct {
@@ -30,8 +30,8 @@ func NewHandler(interviewService interview.Service, interviewTransport interview
 	}
 }
 
-func (h *handler) Create(ctx context.Context) {
-	poll, err := h.interviewTransport.CreateDecode(ctx.RequestCtx)
+func (h *handler) Create(ctx *fasthttp.RequestCtx) {
+	poll, err := h.interviewTransport.CreateDecode(ctx)
 	if err != nil {
 		h.handleError(err, ctx)
 		return
@@ -43,15 +43,15 @@ func (h *handler) Create(ctx context.Context) {
 		return
 	}
 
-	err = h.interviewTransport.CreateEncode(pollReturn, ctx.RequestCtx)
+	err = h.interviewTransport.CreateEncode(pollReturn, ctx)
 	if err != nil {
 		h.handleError(err, ctx)
 		return
 	}
 }
 
-func (h *handler) Get(ctx context.Context) {
-	list, err := h.interviewTransport.GetDecode(ctx.RequestCtx)
+func (h *handler) Get(ctx *fasthttp.RequestCtx) {
+	list, err := h.interviewTransport.GetDecode(ctx)
 	if err != nil {
 		h.handleError(err, ctx)
 		return
@@ -63,15 +63,15 @@ func (h *handler) Get(ctx context.Context) {
 		return
 	}
 
-	err = h.interviewTransport.GetEncode(listReturn, ctx.RequestCtx)
+	err = h.interviewTransport.GetEncode(listReturn, ctx)
 	if err != nil {
 		h.handleError(err, ctx)
 		return
 	}
 }
 
-func (h *handler) Remove(ctx context.Context) {
-	list, err := h.interviewTransport.RemoveDecode(ctx.RequestCtx)
+func (h *handler) Remove(ctx *fasthttp.RequestCtx) {
+	list, err := h.interviewTransport.RemoveDecode(ctx)
 	if err != nil {
 		h.handleError(err, ctx)
 		return
@@ -83,15 +83,15 @@ func (h *handler) Remove(ctx context.Context) {
 		return
 	}
 
-	err = http.EncodeDefault(&listReturn, ctx.RequestCtx)
+	err = http.EncodeDefault(&listReturn, ctx)
 	if err != nil {
 		h.handleError(err, ctx)
 		return
 	}
 }
 
-func (h *handler) GetResult(ctx context.Context) {
-	interviewID, userID, err := h.interviewTransport.GetResultDecode(ctx.RequestCtx)
+func (h *handler) GetResult(ctx *fasthttp.RequestCtx) {
+	interviewID, userID, err := h.interviewTransport.GetResultDecode(ctx)
 	if err != nil {
 		h.handleError(err, ctx)
 		return
@@ -103,15 +103,15 @@ func (h *handler) GetResult(ctx context.Context) {
 		return
 	}
 
-	err = h.interviewTransport.GetResultEncode(interviewResult, ctx.RequestCtx)
+	err = h.interviewTransport.GetResultEncode(interviewResult, ctx)
 	if err != nil {
 		h.handleError(err, ctx)
 		return
 	}
 }
 
-func (h *handler) SetAnswer(ctx context.Context) {
-	userAnswers, err := h.interviewTransport.SetAnswerDecode(ctx.RequestCtx)
+func (h *handler) SetAnswer(ctx *fasthttp.RequestCtx) {
+	userAnswers, err := h.interviewTransport.SetAnswerDecode(ctx)
 	if err != nil {
 		h.handleError(err, ctx)
 		return
@@ -123,15 +123,15 @@ func (h *handler) SetAnswer(ctx context.Context) {
 		return
 	}
 
-	err = h.interviewTransport.SetAnswerEncode(interviewResult, ctx.RequestCtx)
+	err = h.interviewTransport.SetAnswerEncode(interviewResult, ctx)
 	if err != nil {
 		h.handleError(err, ctx)
 		return
 	}
 }
 
-func (h *handler) GetUniversal(ctx context.Context) {
-	request, err := h.interviewTransport.GetUniversalDecode(ctx.RequestCtx)
+func (h *handler) GetUniversal(ctx *fasthttp.RequestCtx) {
+	request, err := h.interviewTransport.GetUniversalDecode(ctx)
 	if err != nil {
 		h.handleError(err, ctx)
 		return
@@ -143,17 +143,17 @@ func (h *handler) GetUniversal(ctx context.Context) {
 		return
 	}
 
-	err = h.interviewTransport.GetUniversalEncode(response, ctx.RequestCtx)
+	err = h.interviewTransport.GetUniversalEncode(response, ctx)
 	if err != nil {
 		h.handleError(err, ctx)
 		return
 	}
 }
 
-func (h *handler) handleError(err error, ctx context.Context) {
-	err = h.errorWorker.ServeJSONError(ctx.RequestCtx, err)
+func (h *handler) handleError(err error, ctx *fasthttp.RequestCtx) {
+	err = h.errorWorker.ServeJSONError(ctx, err)
 	if err != nil {
-		h.errorWorker.ServeFatalError(ctx.RequestCtx)
+		h.errorWorker.ServeFatalError(ctx)
 	}
 	return
 }

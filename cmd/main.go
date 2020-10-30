@@ -5,11 +5,11 @@ import (
 	asapi "github.com/Solar-2020/Account-Backend/pkg/api"
 	authapi "github.com/Solar-2020/Authorization-Backend/pkg/api"
 	"github.com/Solar-2020/GoUtils/context/session"
-	httputils "github.com/Solar-2020/GoUtils/http"
 	"github.com/Solar-2020/GoUtils/http/errorWorker"
 	"github.com/Solar-2020/Interview-Backend/cmd/config"
 	"github.com/Solar-2020/Interview-Backend/cmd/handlers"
 	interviewHandler "github.com/Solar-2020/Interview-Backend/cmd/handlers/interview"
+	"github.com/Solar-2020/Interview-Backend/internal/clients/auth"
 	"github.com/Solar-2020/Interview-Backend/internal/services/interview"
 	"github.com/Solar-2020/Interview-Backend/internal/storages/answerStorage"
 	"github.com/Solar-2020/Interview-Backend/internal/storages/interviewStorage"
@@ -59,16 +59,18 @@ func main() {
 	interviewHandler := interviewHandler.NewHandler(interviewService, interviewTransport, errorWorker)
 
 	authService := authapi.AuthClient{
-		Addr:    config.Config.AuthServiceAddress,
+		Addr: config.Config.AuthServiceAddress,
 	}
 	session.RegisterAuthService(&authService)
 
 	accountService := asapi.AccountClient{
-		Addr:    config.Config.AccountServiceAddress,
+		Addr: config.Config.AccountServiceAddress,
 	}
 	session.RegisterAccountService(&accountService)
 
-	middlewares := httputils.NewMiddleware()
+	authClient := auth.NewClient(config.Config.AuthServiceAddress, config.Config.ServerSecret)
+
+	middlewares := handlers.NewMiddleware(&log, authClient)
 
 	server := fasthttp.Server{
 		Handler: handlers.NewFastHttpRouter(interviewHandler, middlewares).Handler,

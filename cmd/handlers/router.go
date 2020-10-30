@@ -16,7 +16,8 @@ func NewFastHttpRouter(interview interviewHandler.Handler, middleware Middleware
 	router.Handle("POST", "/api/interview", middleware.Log(middleware.InternalAuth(interview.Get)))
 	router.Handle("POST", "/api/interview/remove", middleware.Log(middleware.InternalAuth(interview.Remove)))
 
-	router.Handle("POST", "/api/interview/result/:interviewID", middleware.Log(middleware.ExternalAuth(interview.SetAnswer)))
+	//router.Handle("POST", "/api/interview/result/:interviewID", middleware.Log(middleware.ExternalAuth(interview.SetAnswer)))
+	router.Handle("POST", "/api/interview/result/:interviewID", interview.SetAnswer)
 	router.Handle("GET", "/api/interview/result/:interviewID", middleware.Log(middleware.ExternalAuth(interview.GetResult)))
 
 	router.Handle("POST", "/api/interview/list", middleware.Log(middleware.InternalAuth(interview.GetUniversal)))

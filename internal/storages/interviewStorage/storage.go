@@ -299,7 +299,7 @@ func (s *storage) SelectInterviewWithStatus(interviewID models.InterviewID, user
 		   (SELECT count(*)
 			FROM users_answers AS ua
 			WHERE ua.user_id = $1
-			  AND ua.interview_id = i.post_id)
+			  AND ua.interview_id = $2)
 	FROM interviews AS i
 	WHERE i.id = $2;`
 

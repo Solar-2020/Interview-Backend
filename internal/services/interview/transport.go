@@ -2,6 +2,7 @@ package interview
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/Solar-2020/Interview-Backend/pkg/api"
 	"github.com/Solar-2020/Interview-Backend/pkg/models"
 	"github.com/go-playground/validator"
@@ -135,14 +136,12 @@ func (t transport) GetUniversalEncode(response api.GetUniversalResponse, ctx *fa
 }
 
 func (t transport) SetAnswerDecode(ctx *fasthttp.RequestCtx) (request models.UserAnswers, err error) {
-	//userID := ctx.Value("UserID").(int)
-	userID := 1
 	var userAnswers models.UserAnswers
 	err = json.Unmarshal(ctx.Request.Body(), &userAnswers)
 	if err != nil {
 		return
 	}
-	userAnswers.UserID = userID
+
 	interviewIDStr := ctx.UserValue("interviewID").(string)
 	interviewID, err := strconv.Atoi(interviewIDStr)
 	if err != nil {
@@ -151,9 +150,14 @@ func (t transport) SetAnswerDecode(ctx *fasthttp.RequestCtx) (request models.Use
 
 	userAnswers.InterviewID = models.InterviewID(interviewID)
 
-	request = userAnswers
 
-	return
+	userID, ok := ctx.UserValue("userID").(int)
+	if ok {
+		userAnswers.UserID = userID
+		request = userAnswers
+		return
+	}
+	return request, errors.New("userID not found")
 }
 
 func (t transport) SetAnswerEncode(response models.InterviewResult, ctx *fasthttp.RequestCtx) (err error) {

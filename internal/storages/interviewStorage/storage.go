@@ -249,6 +249,10 @@ func (s *storage) selectAnswers(interviewIDs []models.InterviewID) (answers []mo
 	FROM answers AS a
 	WHERE a.interview_id IN `
 
+	if len(interviewIDs) == 0 {
+		return
+	}
+
 	sqlQuery := sqlQueryTemplate + sqlutils.CreateIN(len(interviewIDs))
 
 	var params []interface{}

@@ -92,7 +92,7 @@ func (t transport) RemoveDecode(ctx *fasthttp.RequestCtx) (request api.RemoveReq
 
 func (t transport) GetResultDecode(ctx *fasthttp.RequestCtx) (request models.InterviewID, userID int, err error) {
 	//userID := ctx.Value("UserID").(int)
-	userID = 1
+	userID = ctx.UserValue("userID").(int)
 	//TODO THINK ABOUT CHECK PERMISSION
 	interviewIDStr := ctx.UserValue("interviewID").(string)
 	tmp, err := strconv.Atoi(interviewIDStr)

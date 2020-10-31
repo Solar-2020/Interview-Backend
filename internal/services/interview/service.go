@@ -3,6 +3,7 @@ package interview
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"github.com/Solar-2020/Interview-Backend/pkg/api"
 	"github.com/Solar-2020/Interview-Backend/pkg/models"
 )
@@ -81,9 +82,9 @@ func (s *service) GetResult(interviewID models.InterviewID, userID int) (respons
 		return
 	}
 
-	for i, _ := range response.Answers {
-		for j, _ := range userAnswers {
-			if int(response.Answers[i].ID) == int(userAnswers[j].ID) {
+	for i := range response.Answers {
+		for _, ans := range userAnswers {
+			if int(response.Answers[i].ID) == int(ans.ID) {
 				response.Answers[i].IsMyAnswer = true
 			}
 		}
@@ -138,6 +139,8 @@ func (s *service) SetAnswers(answers models.UserAnswers) (response models.Interv
 	//TODO CHECK REPEATED VOTE
 	err = s.answerStorage.InsertUserAnswers(answers)
 	if err != nil {
+		fmt.Println(err)
+		err = fmt.Errorf("cannot set vote")
 		return
 	}
 

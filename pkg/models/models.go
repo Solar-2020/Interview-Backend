@@ -42,7 +42,7 @@ type UserAnswer struct {
 
 type UserAnswers struct {
 	PostID      int         `json:"postID"`
-	InterviewID InterviewID `json:"interviewID"`
+	InterviewID InterviewID `json:"-"`
 	UserID      int         `json:"-"`
 	AnswerIDs   []AnswerID  `json:"answers"`
 }
